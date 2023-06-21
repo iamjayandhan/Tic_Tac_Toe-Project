@@ -15,30 +15,43 @@ def SetLayout(id, player_symbol):
 # Function to check and display the winner
 def CheckWinner():
     global mov, name1, name2
+    winner = 0
+    
 
-    winning_combinations = [
-        # Rows
-        [(i, j) for j in range(1, board_size + 1)] for i in range(1, board_size + 1)
-    ] + [
-        # Columns
-        [(j, i) for j in range(1, board_size + 1)] for i in range(1, board_size + 1)
-    ] + [
-        # Diagonals
-        [(i, i) for i in range(1, board_size + 1)],
-        [(i, board_size + 1 - i) for i in range(1, board_size + 1)]
-    ]
+    # Rows
+    for i in range(board_size):
+        if all(x in p1 for x in range(i * board_size + 1, (i + 1) * board_size + 1)):
+            winner = 1
+        if all(x in p2 for x in range(i * board_size + 1, (i + 1) * board_size + 1)):
+            winner = 2
 
-    for combination in winning_combinations:
-        if all(id in p1 for id in combination):
-            messagebox.showinfo(title="Congratulations.", message=(name1 + " is the winner"))
-            return
-        elif all(id in p2 for id in combination):
-            messagebox.showinfo(title="Congratulations.", message=(name2 + " is the winner"))
-            return
+    # Columns
+    for i in range(board_size):
+        if all(x in p1 for x in range(i + 1, board_size ** 2 + 1, board_size)):
+            winner = 1
+        if all(x in p2 for x in range(i + 1, board_size ** 2 + 1, board_size)):
+            winner = 2
 
-    if mov == board_size**2:
+    # Diagonal (top-left to bottom-right)
+    if all(x in p1 for x in range(1, board_size ** 2 + 1, board_size + 1)):
+        winner = 1
+    if all(x in p2 for x in range(1, board_size ** 2 + 1, board_size + 1)):
+        winner = 2
+
+    # Diagonal (top-right to bottom-left)
+    if all(x in p1 for x in range(board_size, board_size ** 2 - board_size + 1, board_size - 1)):
+        winner = 1
+    if all(x in p2 for x in range(board_size, board_size ** 2 - board_size + 1, board_size - 1)):
+        winner = 2
+
+    if winner == 1:
+        messagebox.showinfo(title="Congratulations.", message=(name1 + " is the winner"))
+    elif winner == 2:
+        messagebox.showinfo(title="Congratulations.", message=(name2 + " is the winner"))
+    elif mov == board_size ** 2:
         messagebox.showwarning(title="Draw", message="Match is DRAW!\nTRY USING TACTICS!!")
 
+# Function to handle button click
 # Function to handle button click
 def ButtonClick(id):
     global ActivePlayer, p1, p2, mov, name1, name2
